@@ -292,7 +292,7 @@ nav h1 a {
   }
 
   .inside #map {
-    height: 100%;
+    height: calc(100% - 6.2em);
   }
 
   #restaurant-container {
