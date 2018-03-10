@@ -65,6 +65,7 @@ img {
 #maincontent {
   background-color: #f3f3f3;
   min-height: 100%;
+  position: relative;
 }
 #footer {
   background-color: #383838;
@@ -96,6 +97,25 @@ nav h1 a {
   margin: 0.5em;
   padding: 1em;
   text-transform: uppercase;
+}
+.skiplink {
+  background-color: #fff;
+  clip-path: polygon(0 0);
+  font-size: 0.8em;
+  font-weight: bold;
+  height: 1px;
+  left: 1em;
+  padding: 0.75em 1em;
+  position: absolute;
+  width: 1px;
+  top: 1em;
+  z-index: 1;
+}
+.skiplink:focus {
+  clip-path: unset;
+  color: #dc3a00;
+  height: initial;
+  width: initial;
 }
 #breadcrumb {
   padding: 0.8em 2em 1em;

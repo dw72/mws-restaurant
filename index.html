@@ -19,11 +19,12 @@
   </header>
 
   <main id="maincontent">
-    <section id="map-container" aria-hidden="true">
+    <a class="skiplink" href="#filter-options">Skip the map and jump directly to the restaurants filter</a>
+    <section id="map-container" role="application" aria-hidden="true">
       <div id="map"></div>
     </section>
     <section>
-      <div class="filter-options">
+      <div id="filter-options" class="filter-options">
         <h2>Filter Results</h2>
         <label for="neighborhoods-select">Select Neighborhood</label>
         <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
