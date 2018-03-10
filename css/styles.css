@@ -22,7 +22,7 @@ li {
   color: #333;
 }
 a {
-  color: orange;
+  color: #dc3a00;
   text-decoration: none;
 }
 a:hover,
@@ -67,13 +67,16 @@ img {
   min-height: 100%;
 }
 #footer {
-  background-color: #444;
+  background-color: #383838;
   color: #b1b1b1;
   font-size: 8pt;
   letter-spacing: 1px;
   padding: 2em;
   text-align: center;
   text-transform: uppercase;
+}
+#footer a {
+  color: #ff7949;
 }
 /* ====================== Navigation ====================== */
 nav {
