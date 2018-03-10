@@ -60,6 +60,9 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById('restaurant-img')
   image.className = 'restaurant-img'
+  image.srcset = DBHelper.imageSrcsetForRestaurant(restaurant)
+  image.sizes =
+    '(max-width: 360px) 320px, (max-width: 479px) 440px, (max-width: 779px) 740px, (max-width: 940px) 440px, (max-width: 1199px) 570px, (max-width: 1439px) 740px, (max-width: 1799px) 570px, (max-width: 2299px) 740px, (min-width: 2300px) 820px'
   image.src = DBHelper.imageUrlForRestaurant(restaurant)
   image.alt = ''
 
