@@ -53,7 +53,6 @@ fetchRestaurantFromURL = callback => {
  */
 fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name')
-  name.setAttribute('aria-label', `Restaurant name: ${restaurant.name}`)
   name.innerHTML = restaurant.name
 
   const address = document.getElementById('restaurant-address')
