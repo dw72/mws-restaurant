@@ -37,9 +37,8 @@
   <main id="maincontent">
     <!-- Beginning map -->
     <section id="map-container" aria-hidden="true">
-      <h2>Map of restaurant neighbourhood</h2>
       <a class="skiplink" href="#restaurant-container">Skip the map and jump directly to the restaurant details</a>
-      <div id="map" role="presentation"></div>
+      <div id="map" role="application"></div>
     </section>
     <!-- End map -->
     <!-- Beginning restaurant -->
@@ -49,8 +48,8 @@
       <p id="restaurant-cuisine"></p>
       <p id="restaurant-address"></p>
       <table id="restaurant-hours">
-        <caption>Opening hours</caption>
-        <thead>
+        <caption class="hidden">Opening hours</caption>
+        <thead class="hidden">
           <tr>
             <th>Day</th>
             <th>Hours</th>
