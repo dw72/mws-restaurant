@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
   <link rel="stylesheet" href="css/styles.css">
   <title>Restaurant Reviews</title>
 </head>
@@ -19,9 +19,10 @@
   </header>
 
   <main id="maincontent">
-    <a class="skiplink" href="#filter-options">Skip the map and jump directly to the restaurants filter</a>
-    <section id="map-container" role="presentation" aria-hidden="true">
-      <div id="map"></div>
+    <section id="map-container" aria-hidden="true">
+      <h2>Map of restaurants</h2>
+      <a class="skiplink" href="#filter-options">Skip the map and jump directly to the restaurants filter</a>
+      <div id="map" role="presentation"></div>
     </section>
     <section>
       <div id="filter-options" class="filter-options">
@@ -39,10 +40,9 @@
     </section>
   </main>
 
-  <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
-  <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
+  <script src="js/dbhelper.js"></script>
+  <script src="js/main.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeRuarAl0xOgQAoPM-FHSWp10qeay3qNw&libraries=places&callback=initMap"></script>
-
 
   <footer id="footer">
     Copyright (c) 2017

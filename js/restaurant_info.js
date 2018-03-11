@@ -84,8 +84,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
  * Create restaurant operating hours HTML table and add it to the webpage.
  */
 fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => {
-  const hours = document.getElementById('restaurant-hours')
-  hours.setAttribute('aria-label', `Openning hours`)
+  const hours = document.querySelector('#restaurant-hours tbody')
   for (let key in operatingHours) {
     const row = document.createElement('tr')
 
@@ -130,10 +129,12 @@ createReviewHTML = review => {
   const li = document.createElement('li')
   const name = document.createElement('p')
   name.innerHTML = review.name
+  name.setAttribute('aria-label', `Written by: ${review.name}`)
   li.appendChild(name)
 
   const date = document.createElement('p')
   date.innerHTML = review.date
+  date.setAttribute('aria-label', `On: ${review.date}`)
   li.appendChild(date)
 
   const rating = document.createElement('p')
@@ -154,6 +155,7 @@ fillBreadcrumb = (restaurant = self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb')
   const li = document.createElement('li')
   li.innerHTML = restaurant.name
+  li.setAttribute('aria-current', 'page')
   breadcrumb.appendChild(li)
 }
 
