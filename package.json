@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "--- #### _Three Stage Course Material Project - Restaurant Reviews_",
   "scripts": {
-    "build": "gulp"
+    "build": "gulp",
+    "start": "http-server -p 5500"
   },
   "repository": {
     "type": "git",
@@ -15,6 +16,7 @@
     "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-load-plugins": "^1.5.0",
-    "gulp-responsive": "^2.9.0"
+    "gulp-responsive": "^2.9.0",
+    "http-server": "^0.11.1"
   }
 }
