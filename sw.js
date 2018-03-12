@@ -6,7 +6,7 @@ const CACHE_NAME = `${APP_NAME}-v${CACHE_VERSION}`
 const CACHE_URLS = [
   '/',
   'index.html',
-  // 'restaurant.html',
+  'offline.html',
   'css/styles.css',
   'data/restaurants.json',
   'js/dbhelper.js',
@@ -46,7 +46,8 @@ self.addEventListener('fetch', event => {
             return response
           })
           .catch(() => {
-            return new Response('<h1>We are offline...</h1>', { headers: { 'content-type': 'text/html' } })
+            //
+            return cache.match('/offline.html')
           })
         return cacheResponse || fetchPromise
       })

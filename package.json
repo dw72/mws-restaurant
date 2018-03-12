@@ -4,7 +4,7 @@
   "description": "--- #### _Three Stage Course Material Project - Restaurant Reviews_",
   "scripts": {
     "build": "gulp",
-    "start": "http-server -p 5500"
+    "start": "node_modules/http-server/bin/http-server -p 5500"
   },
   "repository": {
     "type": "git",

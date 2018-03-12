@@ -124,6 +124,9 @@ nav h1 a {
   height: initial;
   width: initial;
 }
+#offline {
+  padding: 2em 1em;
+}
 #breadcrumb {
   padding: 0.8em 1em 1em;
   list-style: none;
@@ -264,6 +267,7 @@ nav h1 a {
   min-height: 248px;
   min-width: 100%;
 }
+#offline h2,
 #restaurants-list li h3 {
   color: #dc3a00;
   font-family: Arial, sans-serif;
