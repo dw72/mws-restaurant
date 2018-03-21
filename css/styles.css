@@ -207,16 +207,16 @@ nav h1 a {
   outline: none;
 }
 
-@media (min-width: 520px) {
+@media (min-width: 480px) {
   .filter-options {
     grid-template-columns: repeat(2, auto);
   }
 }
 
-@media (min-width: 780px) {
+@media (min-width: 768px) {
   .filter-options {
     grid-gap: 2em;
-    grid-template-columns: auto 21em 21em;
+    grid-template-columns: auto 20em 20em;
     justify-content: start;
   }
   .filter-options h2 {
@@ -233,7 +233,7 @@ nav h1 a {
   margin: 0;
   padding: 2em 1em;
 }
-@media (min-width: 780px) {
+@media (min-width: 768px) {
   #restaurants-list {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: minmax(380px, auto);
@@ -241,7 +241,7 @@ nav h1 a {
 }
 @media (min-width: 960px) {
   #restaurants-list {
-    grid-template-columns: repeat(auto-fill, minmax(28em, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(27em, 1fr));
   }
 }
 #restaurants-list li {
@@ -297,7 +297,7 @@ nav h1 a {
 
 /* ====================== Restaurant Details ====================== */
 
-@media (min-width: 780px) {
+@media (min-width: 768px) {
   .inside header {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -391,7 +391,7 @@ nav h1 a {
   border-top: 1px solid #fff;
   padding: 1em;
 }
-@media (min-width: 780px) {
+@media (min-width: 768px) {
   #restaurant-container {
     padding-top: 11em;
   }
