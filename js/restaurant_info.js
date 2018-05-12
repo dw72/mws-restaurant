@@ -5,45 +5,26 @@ var map
  * Initialize Google map, called from HTML.
  */
 window.initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
-    if (error) {
-      // Got an error!
-      console.error(error)
-    } else {
-      self.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 16,
-        center: restaurant.latlng,
-        scrollwheel: false
-      })
-      fillBreadcrumb()
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.map)
-    }
-  })
-}
-
-/**
- * Get current restaurant from page URL.
- */
-fetchRestaurantFromURL = callback => {
-  if (self.restaurant) {
-    // restaurant already fetched!
-    callback(null, self.restaurant)
-    return
-  }
+  // Get id from URL
   const id = getParameterByName('id')
   if (!id) {
-    // no id found in URL
-    error = 'No restaurant id in URL'
-    callback(error, null)
+    console.error('Error: No restaurant id in URL')
   } else {
-    DBHelper.fetchRestaurantById(id, (error, restaurant) => {
-      self.restaurant = restaurant
-      if (!restaurant) {
-        console.error(error)
-        return
+    // Fetch restaurant by id
+    DBHelper.fetchRestaurantById(id).then(restaurant => {
+      if (restaurant) {
+        self.restaurant = restaurant
+        fillRestaurantHTML()
+
+        self.map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 16,
+          center: restaurant.latlng,
+          scrollwheel: false
+        })
+
+        fillBreadcrumb()
+        DBHelper.mapMarkerForRestaurant(self.restaurant, self.map)
       }
-      fillRestaurantHTML()
-      callback(null, restaurant)
     })
   }
 }
