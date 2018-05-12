@@ -11,21 +11,25 @@ window.initMap = () => {
     console.error('Error: No restaurant id in URL')
   } else {
     // Fetch restaurant by id
-    DBHelper.fetchRestaurantById(id).then(restaurant => {
-      if (restaurant) {
-        self.restaurant = restaurant
-        fillRestaurantHTML()
+    DBHelper.fetchRestaurantById(id)
+      .then(restaurant => {
+        if (restaurant) {
+          self.restaurant = restaurant
+          fillRestaurantHTML()
 
-        self.map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 16,
-          center: restaurant.latlng,
-          scrollwheel: false
-        })
+          self.map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 16,
+            center: restaurant.latlng,
+            scrollwheel: false
+          })
 
-        fillBreadcrumb()
-        DBHelper.mapMarkerForRestaurant(self.restaurant, self.map)
-      }
-    })
+          fillBreadcrumb()
+          DBHelper.mapMarkerForRestaurant(self.restaurant, self.map)
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 }
 
