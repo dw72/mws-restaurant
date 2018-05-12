@@ -12,32 +12,32 @@ Before running this project You need to install and run [Local Development API S
 
 1.  Clone repository
 
-```
-git clone git@github.com:dw72/mws-restaurant-stage-1.git
-```
+    ```sh
+    git clone git@github.com:dw72/mws-restaurant-stage-1.git
+    ```
 
-2.  Go to the app folder
+1.  Go to the app folder
 
-```
-cd mws-restaurant-stage-1
-```
+    ```sh
+    cd mws-restaurant-stage-1
+    ```
 
-3.  Install dependencies (if you don't have node install it first)
+1.  Install dependencies (if you don't have node install it first)
 
-```
-npm install
-```
+    ```sh
+    npm install
+    ```
 
-4.  Build project
+1.  Build project
 
-```
-npm run build
-```
+    ```sh
+    npm run build
+    ```
 
-5.  Run local http server
+1.  Run local http server
 
-```
-npm start
-```
+    ```sh
+    npm start
+    ```
 
-6.  Open site `http://localhost:5500` in your browser.
+1.  Open site `http://localhost:5500` in your browser.
