@@ -1,0 +1,30 @@
+{
+  "short_name": "MWS Restaurants",
+  "name": "Mobile Web Specialist Restaurant Reviews App",
+  "icons": [
+    {
+      "src": "img/icons/launcher-icon-48px.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "img/icons/launcher-icon-96px.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "img/icons/launcher-icon-192px.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "img/icons/launcher-icon-512px.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#4285f4",
+  "theme_color": "#4285f4",
+  "display": "standalone"
+}

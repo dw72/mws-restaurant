@@ -6,6 +6,34 @@ gulp.task('clean', function() {
   return del(['img'])
 })
 
+gulp.task('icons', function() {
+  return gulp
+    .src('img_src/launcher.png')
+    .pipe(
+      $.responsive({
+        '*': [
+          {
+            width: 48,
+            rename: 'launcher-icon-48px.png'
+          },
+          {
+            width: 96,
+            rename: 'launcher-icon-96px.png'
+          },
+          {
+            width: 192,
+            rename: 'launcher-icon-192px.png'
+          },
+          {
+            width: 512,
+            rename: 'launcher-icon-512px.png'
+          }
+        ]
+      })
+    )
+    .pipe(gulp.dest('img/icons'))
+})
+
 gulp.task('images', function() {
   return gulp
     .src('img_src/*.jpg')
@@ -56,4 +84,4 @@ gulp.task('images', function() {
     .pipe(gulp.dest('img'))
 })
 
-gulp.task('default', ['clean', 'images'])
+gulp.task('default', ['clean', 'images', 'icons'])
