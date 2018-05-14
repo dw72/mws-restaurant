@@ -1,7 +1,3 @@
-addEventListener('fetch', event => {
-  clg()
-})
-
 /**
  * Common database helper functions.
  */
