@@ -75,21 +75,6 @@ class DBHelper {
 
       // First resolved promise wins
       return Promise.race([(restaurantsFromDB, restaurantsFromAPI)])
-
-      // return db
-      //   .transaction('restaurants')
-      //   .objectStore('restaurants')
-      //   .count()
-      //   .then(count => {
-      //     const restaurantsFromDB = this.fetchRestaurantsFromDB(db)
-
-      //     const restaurantsFromAPI = this.fetchRestaurantsFromAPI().then(restaurants =>
-      //       this.putRestaurantsToDatabase(restaurants, db)
-      //     )
-
-      //     // First resolved promise wins
-      //     return Promise.race([(restaurantsFromDB, restaurantsFromAPI)])
-      //   })
     })
   }
 
