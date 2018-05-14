@@ -6,82 +6,83 @@ gulp.task('clean', function() {
   return del(['img'])
 })
 
-gulp.task('icons', function() {
+gulp.task('images', function() {
   return gulp
-    .src('img_src/launcher.png')
+    .src('img_src/*.{jpg,png}')
     .pipe(
       $.responsive({
-        '*': [
+        'launcher.png': [
           {
             width: 48,
-            rename: 'launcher-icon-48px.png'
+            rename: {
+              dirname: 'icons',
+              suffix: '-icon-48px'
+            }
           },
           {
             width: 96,
-            rename: 'launcher-icon-96px.png'
+            rename: {
+              dirname: 'icons',
+              suffix: '-icon-96px'
+            }
           },
           {
             width: 192,
-            rename: 'launcher-icon-192px.png'
+            rename: {
+              dirname: 'icons',
+              suffix: '-icon-192px'
+            }
           },
           {
             width: 512,
-            rename: 'launcher-icon-512px.png'
+            rename: {
+              dirname: 'icons',
+              suffix: '-icon-512px'
+            }
+          }
+        ],
+        '*.jpg': [
+          {
+            width: 320,
+            quality: 70,
+            rename: {
+              suffix: '-320px'
+            }
+          },
+          {
+            width: 440,
+            quality: 70,
+            rename: {
+              suffix: '-440px'
+            }
+          },
+          {
+            width: 570,
+            quality: 70,
+            rename: {
+              suffix: '-570px'
+            }
+          },
+          {
+            width: 740,
+            quality: 70,
+            rename: {
+              suffix: '-740px'
+            }
+          },
+          {
+            width: 820,
+            quality: 70,
+            withoutEnlargement: false,
+            rename: {
+              suffix: '-820px'
+            }
           }
         ]
       })
     )
-    .pipe(gulp.dest('img/icons'))
-})
-
-gulp.task('images', function() {
-  return gulp
-    .src('img_src/*.jpg')
-    .pipe(
-      $.responsive(
-        {
-          '*': [
-            {
-              width: 320,
-              rename: {
-                suffix: '-320px'
-              }
-            },
-            {
-              width: 440,
-              rename: {
-                suffix: '-440px'
-              }
-            },
-            {
-              width: 570,
-              rename: {
-                suffix: '-570px'
-              }
-            },
-            {
-              width: 740,
-              rename: {
-                suffix: '-740px'
-              }
-            },
-            {
-              width: 820,
-              withoutEnlargement: false,
-              rename: {
-                suffix: '-820px'
-              }
-            }
-          ]
-        },
-        {
-          quality: 70,
-          progressive: true,
-          withMetadata: false
-        }
-      )
-    )
+    .pipe($.imagemin([$.imagemin.jpegtran({ progressive: true }), $.imagemin.optipng({ optimizationLevel: 5 })]))
     .pipe(gulp.dest('img'))
 })
 
-gulp.task('default', ['clean', 'images', 'icons'])
+gulp.task('default', ['clean', 'images'])
