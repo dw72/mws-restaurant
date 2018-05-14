@@ -233,13 +233,13 @@ nav h1 a {
   margin: 0;
   padding: 2em 1em;
 }
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
   #restaurants-list {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: minmax(380px, auto);
   }
 }
-@media (min-width: 960px) {
+@media screen and (min-width: 960px) {
   #restaurants-list {
     grid-template-columns: repeat(auto-fill, minmax(27em, 1fr));
   }

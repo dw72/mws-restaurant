@@ -164,17 +164,18 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    const name = restaurant.photograph || 'ph'
+    const size = 840
+    const name = restaurant.photograph || 'placeholder'
     const ext = 'jpg'
-    return `/img/${name}-820px.${ext}`
+    return `/img/${name}-${size}px.${ext}`
   }
 
   /**
    * Restaurant image srcset.
    */
   static imageSrcsetForRestaurant(restaurant) {
-    const sizes = [820, 740, 570, 440, 320]
-    const name = restaurant.photograph || 'ph'
+    const sizes = [840, 720, 600, 480, 360]
+    const name = restaurant.photograph || 'placeholder'
     const ext = 'jpg'
     return sizes.map(size => `/img/${name}-${size}px.${ext} ${size}w`).join(',')
   }

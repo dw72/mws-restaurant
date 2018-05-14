@@ -43,39 +43,39 @@ gulp.task('images', function() {
         ],
         '*.jpg': [
           {
-            width: 320,
+            width: 360,
             quality: 70,
             rename: {
-              suffix: '-320px'
+              suffix: '-360px'
             }
           },
           {
-            width: 440,
+            width: 480,
             quality: 70,
             rename: {
-              suffix: '-440px'
+              suffix: '-480px'
             }
           },
           {
-            width: 570,
+            width: 600,
             quality: 70,
             rename: {
-              suffix: '-570px'
+              suffix: '-600px'
             }
           },
           {
-            width: 740,
+            width: 720,
             quality: 70,
             rename: {
-              suffix: '-740px'
+              suffix: '-720px'
             }
           },
           {
-            width: 820,
+            width: 840,
             quality: 70,
             withoutEnlargement: false,
             rename: {
-              suffix: '-820px'
+              suffix: '-840px'
             }
           }
         ]
