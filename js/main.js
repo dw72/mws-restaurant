@@ -147,7 +147,7 @@ createRestaurantHTML = restaurant => {
   image.className = 'restaurant-img'
   image.srcset = DBHelper.imageSrcsetForRestaurant(restaurant)
   image.sizes =
-    '(min-width: 1949px) 20vw, (min-width: 1562px) 25vw, (min-width: 1175px) 33vw, (min-width: 768px) 50vw, 100vw'
+    '(min-width: 2320px) 15vw, (min-width: 1949px) 18vw, (min-width: 1562px) 22vw, (min-width: 1175px) 30vw, (min-width: 768px) 45vw, 100vw'
   image.src = DBHelper.imageUrlForRestaurant(restaurant)
   image.alt = ''
   li.append(image)
