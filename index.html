@@ -6,9 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
   <link rel="stylesheet" href="css/styles.css">
+  <!-- Manifest file and PWA settings -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4285f4" />
   <title>Restaurant Reviews</title>
+  <!-- Lazy load images script -->
   <script>
     window.lazySizesConfig = window.lazySizesConfig || {};
     window.lazySizesConfig.expand = 220;    
@@ -47,7 +49,7 @@
     </section>
   </main>
 
-  <script src="node_modules/dexie/dist/dexie.min.js"></script>
+  <script src="node_modules/idb/lib/idb.js"></script>
   <script src="js/dbhelper.js"></script>
   <script src="js/main.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeRuarAl0xOgQAoPM-FHSWp10qeay3qNw&libraries=places&callback=initMap"></script>

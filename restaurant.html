@@ -5,9 +5,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Normalize.css for better cross-browser consistency -->
-  <link rel="preload" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" as="style">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
   <!-- Main CSS file -->
   <link rel="stylesheet" href="css/styles.css">
+  <!-- Manifest file and PWA settings -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4285f4" />
   <title>Restaurant Info</title>
@@ -81,7 +82,7 @@
   <!-- End footer -->
 
   <!-- Beginning scripts -->
-  <script src="node_modules/dexie/dist/dexie.min.js"></script>
+  <script src="node_modules/idb/lib/idb.js"></script>
   <!-- Database helpers -->
   <script src="js/dbhelper.js"></script>
   <!-- Main javascript file -->

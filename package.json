@@ -21,7 +21,7 @@
     "http-server": "^0.11.1"
   },
   "dependencies": {
-    "dexie": "^2.0.3",
+    "idb": "^2.1.1",
     "lazysizes": "^4.0.2"
   }
 }

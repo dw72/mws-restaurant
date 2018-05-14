@@ -1,6 +1,6 @@
-/**
- * Dexie database init.
- */
+addEventListener('fetch', event => {
+  clg()
+})
 
 /**
  * Common database helper functions.
@@ -15,83 +15,119 @@ class DBHelper {
     return `http://localhost:${port}/restaurants`
   }
 
-  static get LOCAL_DB() {
-    const db = new Dexie('mws-restaurants')
-    db.version(1).stores({
-      restaurants: 'id'
-    })
-
-    if (!Dexie.isOpen) {
-      db.open().catch(err => {
-        console.error('Local database open failed: ', err.stack)
-      })
+  static get IDB() {
+    if (!navigator.serviceWorker) {
+      return Promise.resolve()
     }
 
-    return db
+    return idb
+      .open('mws-restaurants', 1, upgradeDb => {
+        switch (upgradeDb.oldVersion) {
+          case 0:
+            upgradeDb.createObjectStore('restaurants', { keyPath: 'id' })
+            break
+        }
+      })
+      .catch(err => {
+        console.error('Local database open failed: ', err.stack)
+      })
   }
 
   /**
    * Fetch all restaurants.
    */
-  static async fetchRestaurants() {
-    const db = DBHelper.LOCAL_DB
+  static fetchRestaurantsFromDB(database) {
+    return database
+      .transaction('restaurants')
+      .objectStore('restaurants')
+      .getAll()
+  }
 
-    // Check count of records stored in database
-    const count = await db.restaurants.count().then(count => count)
+  static fetchRestaurantsFromAPI() {
+    return fetch(DBHelper.DATABASE_URL).then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      throw new Error('The network response was not ok')
+    })
+  }
 
-    // Get restaurants from local database
-    const restaurantsFromDatabase = Promise.resolve(db.restaurants.toArray())
+  static putRestaurantsToDatabase(restaurants, database) {
+    const tx = database.transaction('restaurants', 'readwrite')
+    const store = tx.objectStore('restaurants')
+    restaurants.forEach(restaurant => {
+      store.put(restaurant)
+    })
 
-    // Fetch restaurants from api
-    const restaurantsFromAPI = fetch(DBHelper.DATABASE_URL)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
-        throw new Error('The network response was not ok')
-      })
-      .then(restaurants => {
-        db.transaction('rw', db.restaurants, () => {
-          db.restaurants.bulkPut(restaurants).catch(Dexie.BulkError, err => {
-            console.error('Some restaurants not stored in database')
-          })
-        })
+    tx.complete
+    return restaurants
+  }
 
-        return restaurants
-      })
+  static fetchRestaurants() {
+    return DBHelper.IDB.then(db => {
+      if (!db) return
 
-    return count ? restaurantsFromDatabase : restaurantsFromAPI
+      const restaurantsFromDB = this.fetchRestaurantsFromDB(db)
+
+      const restaurantsFromAPI = this.fetchRestaurantsFromAPI().then(restaurants =>
+        this.putRestaurantsToDatabase(restaurants, db)
+      )
+
+      // First resolved promise wins
+      return Promise.race([(restaurantsFromDB, restaurantsFromAPI)])
+
+      // return db
+      //   .transaction('restaurants')
+      //   .objectStore('restaurants')
+      //   .count()
+      //   .then(count => {
+      //     const restaurantsFromDB = this.fetchRestaurantsFromDB(db)
+
+      //     const restaurantsFromAPI = this.fetchRestaurantsFromAPI().then(restaurants =>
+      //       this.putRestaurantsToDatabase(restaurants, db)
+      //     )
+
+      //     // First resolved promise wins
+      //     return Promise.race([(restaurantsFromDB, restaurantsFromAPI)])
+      //   })
+    })
   }
 
   /**
    * Fetch a restaurant by its ID.
    */
   static async fetchRestaurantById(id) {
-    const db = DBHelper.LOCAL_DB
+    return DBHelper.IDB.then(db => {
+      if (!db) return
+      // Try load restaurant from database
+      const restaurantFromDB = db
+        .transaction('restaurants')
+        .objectStore('restaurants')
+        .get(+id)
 
-    // Get restaurant from local database by id
-    const restaurantFromDatabase = await db.restaurants.get(+id)
+      // Fetch restaurant from API
+      const restaurantFromAPI = fetch(`${DBHelper.DATABASE_URL}/${id}`)
+        .then(res => {
+          if (res.ok) {
+            return res.json()
+          }
+          throw new Error('The network response was not ok')
+        })
+        .then(restaurant => {
+          if (restaurant) {
+            // If fetched from API then put restaurant into database
+            const tx = db.transaction('restaurants', 'readwrite')
+            const store = tx.objectStore('restaurants')
+            store.put(restaurant)
+            tx.complete
+          }
 
-    // Fetch restaurant by id.
-    const dbUrl = `${DBHelper.DATABASE_URL}/${id}`
-    const restaurantFromAPI = fetch(dbUrl)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
-        throw new Error('The network response was not ok')
-      })
-      .then(restaurant => {
-        db.transaction('rw', db.restaurants, () => {
-          db.restaurants.put(restaurant).catch(err => {
-            console.error('Restaurant not stored in database')
-          })
+          return restaurant
         })
 
-        return restaurant
-      })
-
-    return restaurantFromDatabase || restaurantFromAPI
+      // First resolved promise wins
+      return Promise.race([restaurantFromDB, restaurantFromAPI])
+    })
   }
 
   /**
