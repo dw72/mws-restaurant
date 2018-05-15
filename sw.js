@@ -34,7 +34,8 @@ self.addEventListener('activate', event => {
 })
 
 self.addEventListener('fetch', event => {
-  if (!event.request.url.startsWith('http')) return
+  const url = new URL(event.request.url)
+  if (!url.protocol.startsWith('http') || url.port === '1337') return
 
   event.respondWith(
     caches.open(CACHE_NAME).then(cache => {

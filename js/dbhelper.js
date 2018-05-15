@@ -65,12 +65,15 @@ class DBHelper {
 
       const restaurantsFromDB = this.fetchRestaurantsFromDB(db)
 
-      const restaurantsFromAPI = this.fetchRestaurantsFromAPI().then(restaurants =>
-        this.putRestaurantsToDatabase(restaurants, db)
-      )
+      const restaurantsFromAPI = this.fetchRestaurantsFromAPI()
+        .then(restaurants => this.putRestaurantsToDatabase(restaurants, db))
+        .catch(err => {
+          console.error('Error while fetching all restaurants from API')
+        })
 
-      // First resolved promise wins
-      return Promise.race([(restaurantsFromDB, restaurantsFromAPI)])
+      return restaurantsFromDB.then(restaurants => {
+        return restaurants.length ? restaurantsFromDB : restaurantsFromAPI
+      })
     })
   }
 
@@ -105,9 +108,13 @@ class DBHelper {
 
           return restaurant
         })
+        .catch(err => {
+          console.error('Error while fetching restaurant from API', err)
+        })
 
-      // First resolved promise wins
-      return Promise.race([restaurantFromDB, restaurantFromAPI])
+      return restaurantFromDB.then(restaurant => {
+        return Object.keys(restaurant).length ? restaurantFromDB : restaurantFromAPI
+      })
     })
   }
 
