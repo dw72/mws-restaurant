@@ -6,75 +6,118 @@ class DBHelper {
    * Database URL.
    * Change this to restaurants.json file location on your server.
    */
-  static get DATABASE_URL() {
-    const port = 1337 // Change this to your server port
-    return `http://localhost:${port}/restaurants`
+  static get API_URL() {
+    const port = 1337; // Change this to your server port
+    return `http://localhost:${port}`;
   }
 
   static get IDB() {
     if (!navigator.serviceWorker) {
-      return Promise.resolve()
+      return Promise.resolve();
     }
 
     return idb
-      .open('mws-restaurants', 1, upgradeDb => {
+      .open("mws-restaurants", 1, upgradeDb => {
         switch (upgradeDb.oldVersion) {
           case 0:
-            upgradeDb.createObjectStore('restaurants', { keyPath: 'id' })
-            break
+            upgradeDb.createObjectStore("restaurants", { keyPath: "id" });
+            break;
         }
       })
       .catch(err => {
-        console.error('Local database open failed: ', err.stack)
-      })
+        console.error("Local database open failed: ", err.stack);
+      });
   }
 
   /**
-   * Fetch all restaurants.
+   * Fetch all reviews from api.
+   */
+  static fetchReviewsFromAPI() {
+    return fetch(`${DBHelper.API_URL}/reviews`).then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error("The network response was not ok");
+    });
+  }
+
+  /**
+   * Fetch reviews for restaurant from api.
+   */
+  static fetchReviewsForRestaurantFromAPI(restaurantId) {
+    return fetch(`${DBHelper.API_URL}/reviews?restaurant_id=${restaurantId}`).then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error("The network response was not ok");
+    });
+  }
+
+  /**
+   * Fetch all restaurants from api.
+   */
+  static fetchRestaurantsFromAPI() {
+    return fetch(`${DBHelper.API_URL}/restaurants`).then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error("The network response was not ok");
+    });
+  }
+
+  /**
+   * Fetch all restaurants from local database.
    */
   static fetchRestaurantsFromDB(database) {
     return database
-      .transaction('restaurants')
-      .objectStore('restaurants')
-      .getAll()
+      .transaction("restaurants")
+      .objectStore("restaurants")
+      .getAll();
   }
 
-  static fetchRestaurantsFromAPI() {
-    return fetch(DBHelper.DATABASE_URL).then(res => {
-      if (res.ok) {
-        return res.json()
-      }
-      throw new Error('The network response was not ok')
-    })
-  }
-
+  /**
+   * Put restaurants to local database
+   */
   static putRestaurantsToDatabase(restaurants, database) {
-    const tx = database.transaction('restaurants', 'readwrite')
-    const store = tx.objectStore('restaurants')
+    const tx = database.transaction("restaurants", "readwrite");
+    const store = tx.objectStore("restaurants");
     restaurants.forEach(restaurant => {
-      store.put(restaurant)
-    })
+      store.put(restaurant);
+    });
 
-    tx.complete
-    return restaurants
+    tx.complete;
+    return restaurants;
   }
 
+  /**
+   * Fetch restaurants data - first try load from idb, next fetch from api and update idb data.
+   */
   static fetchRestaurants() {
     return DBHelper.IDB.then(db => {
-      if (!db) return
+      if (!db) return;
 
-      const restaurantsFromDB = this.fetchRestaurantsFromDB(db)
+      const restaurantsFromDB = this.fetchRestaurantsFromDB(db);
 
-      const restaurantsFromAPI = this.fetchRestaurantsFromAPI()
+      // Fetch restaurants and reviews from api and combine the proper reviews for each restaurant
+      const restaurantsFromAPI = Promise.all([this.fetchRestaurantsFromAPI(), this.fetchReviewsFromAPI()])
+        .then(([restaurants, reviews]) => {
+          restaurants.forEach(restaurant => {
+            const restaurantReviews = reviews.filter(review => review.restaurant_id === restaurant.id);
+            restaurant.reviews = restaurantReviews.map(review => review);
+          });
+
+          return restaurants;
+        })
+        // Put fetched restaurants into local database
         .then(restaurants => this.putRestaurantsToDatabase(restaurants, db))
         .catch(err => {
-          console.error('Error while fetching all restaurants from API')
-        })
+          console.error("Error while fetching all restaurants from API", err);
+        });
 
       return restaurantsFromDB.then(restaurants => {
-        return restaurants.length ? restaurantsFromDB : restaurantsFromAPI
-      })
-    })
+        return restaurants && restaurants.length ? restaurantsFromDB : restaurantsFromAPI;
+      });
+    });
   }
 
   /**
@@ -82,63 +125,75 @@ class DBHelper {
    */
   static async fetchRestaurantById(id) {
     return DBHelper.IDB.then(db => {
-      if (!db) return
-      // Try load restaurant from database
+      if (!db) return;
+      // Try load restaurant from local database
       const restaurantFromDB = db
-        .transaction('restaurants')
-        .objectStore('restaurants')
-        .get(+id)
+        .transaction("restaurants")
+        .objectStore("restaurants")
+        .get(+id);
 
       // Fetch restaurant from API
-      const restaurantFromAPI = fetch(`${DBHelper.DATABASE_URL}/${id}`)
+      const restaurantFromAPI = fetch(`${DBHelper.API_URL}/restaurants/${id}`)
         .then(res => {
           if (res.ok) {
-            return res.json()
+            return res.json();
           }
-          throw new Error('The network response was not ok')
+
+          throw new Error("The network response was not ok");
         })
         .then(restaurant => {
           if (restaurant) {
-            // If fetched from API then put restaurant into database
-            const tx = db.transaction('restaurants', 'readwrite')
-            const store = tx.objectStore('restaurants')
-            store.put(restaurant)
-            tx.complete
+            // Fetch restaurant reviews from API
+            return this.fetchReviewsForRestaurantFromAPI(restaurant.id).then(reviews => {
+              restaurant.reviews = reviews.map(review => review);
+              return restaurant;
+            });
           }
 
-          return restaurant
+          return restaurant;
+        })
+        .then(restaurant => {
+          if (restaurant) {
+            // Put fetched restaurant into local database
+            const tx = db.transaction("restaurants", "readwrite");
+            const store = tx.objectStore("restaurants");
+            store.put(restaurant);
+            tx.complete;
+          }
+
+          return restaurant;
         })
         .catch(err => {
-          console.error('Error while fetching restaurant from API', err)
-        })
+          console.error("Error while fetching restaurant from API", err);
+        });
 
       return restaurantFromDB.then(restaurant => {
-        return Object.keys(restaurant).length ? restaurantFromDB : restaurantFromAPI
-      })
-    })
+        return restaurant && Object.keys(restaurant).length ? restaurantFromDB : restaurantFromAPI;
+      });
+    });
   }
 
   /**
    * Fetch restaurants by a cuisine and a neighborhood with proper error handling.
    */
-  static async fetchRestaurantByCuisineAndNeighborhood(cuisine = 'all', neighborhood = 'all') {
+  static async fetchRestaurantByCuisineAndNeighborhood(cuisine = "all", neighborhood = "all") {
     // Fetch all restaurants
     return await DBHelper.fetchRestaurants().then(restaurants => {
       if (!restaurants) {
-        return []
+        return [];
       }
 
-      let results = restaurants
-      if (cuisine != 'all') {
+      let results = restaurants;
+      if (cuisine != "all") {
         // filter by cuisine
-        results = results.filter(r => r.cuisine_type == cuisine)
+        results = results.filter(r => r.cuisine_type == cuisine);
       }
-      if (neighborhood != 'all') {
+      if (neighborhood != "all") {
         // filter by neighborhood
-        results = results.filter(r => r.neighborhood == neighborhood)
+        results = results.filter(r => r.neighborhood == neighborhood);
       }
-      return results
-    })
+      return results;
+    });
   }
 
   /**
@@ -148,15 +203,15 @@ class DBHelper {
     // Fetch all restaurants
     return await DBHelper.fetchRestaurants().then(restaurants => {
       if (!restaurants) {
-        return []
+        return [];
       }
 
       // Get all neighborhoods from all restaurants
-      const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
+      const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood);
       // Remove duplicates from neighborhoods
-      const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i)
-      return uniqueNeighborhoods
-    })
+      const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i);
+      return uniqueNeighborhoods;
+    });
   }
 
   /**
@@ -166,42 +221,42 @@ class DBHelper {
     // Fetch all restaurants
     return await DBHelper.fetchRestaurants().then(restaurants => {
       if (!restaurants) {
-        return []
+        return [];
       }
 
       // Get all neighborhoods from all restaurants
-      const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type)
+      const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type);
       // Remove duplicates from cuisines
-      const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i)
-      return uniqueCuisines
-    })
+      const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i);
+      return uniqueCuisines;
+    });
   }
 
   /**
    * Restaurant page URL.
    */
   static urlForRestaurant(restaurant) {
-    return `./restaurant.html?id=${restaurant.id}`
+    return `./restaurant.html?id=${restaurant.id}`;
   }
 
   /**
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    const size = 840
-    const name = restaurant.photograph || 'placeholder'
-    const ext = 'jpg'
-    return `/img/${name}-${size}px.${ext}`
+    const size = 840;
+    const name = restaurant.photograph || "placeholder";
+    const ext = "jpg";
+    return `/img/${name}-${size}px.${ext}`;
   }
 
   /**
    * Restaurant image srcset.
    */
   static imageSrcsetForRestaurant(restaurant) {
-    const sizes = [840, 720, 600, 480, 360]
-    const name = restaurant.photograph || 'placeholder'
-    const ext = 'jpg'
-    return sizes.map(size => `/img/${name}-${size}px.${ext} ${size}w`).join(',')
+    const sizes = [840, 720, 600, 480, 360];
+    const name = restaurant.photograph || "placeholder";
+    const ext = "jpg";
+    return sizes.map(size => `/img/${name}-${size}px.${ext} ${size}w`).join(",");
   }
 
   /**
@@ -214,7 +269,7 @@ class DBHelper {
       url: DBHelper.urlForRestaurant(restaurant),
       map: map,
       animation: google.maps.Animation.DROP
-    })
-    return marker
+    });
+    return marker;
   }
 }
