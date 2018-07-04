@@ -4,9 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Normalize.css for better cross-browser consistency -->
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
-  <!-- Main CSS file -->
+  <!-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css"> -->
   <link rel="stylesheet" href="css/styles.css">
   <!-- Manifest file and PWA settings -->
   <link rel="manifest" href="manifest.json">
@@ -67,6 +65,26 @@
       <ul id="reviews-list"></ul>
     </section>
     <!-- End reviews -->
+    <!-- Beginning review form -->
+    <section id="review-form">
+      <h2>Add your review</h2>
+      <form>
+        <div class="form-item">
+          <label for="username">Name</label>
+          <input type="text" name="username" id="username">
+        </div>
+        <div class="form-item">
+          <label for="rating">Rating</label>
+          <input type="number" name="rating" id="rating" min="1" max="5" value="5">
+        </div>
+        <div class="form-item">
+          <label for="comment">Review</label>
+          <textarea name="comments" id="comments" cols="30" rows="10"></textarea>
+        </div>
+        <button type="submit" id="submit-review">Add review</button>
+      </form>
+    </section>
+    <!-- End review form -->
   </main>
   <!-- End main -->
 

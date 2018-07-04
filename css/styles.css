@@ -145,7 +145,7 @@ nav h1 a {
 #breadcrumb li + li:before {
   padding: 8px;
   color: black;
-  content: '/\00a0';
+  content: "/\00a0";
 }
 
 /* Add a color to all links inside the list */
@@ -317,7 +317,7 @@ nav h1 a {
   .inside #maincontent {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(2, auto);
+    grid-template-rows: repeat(3, auto);
   }
 
   .inside #map-container {
@@ -340,6 +340,11 @@ nav h1 a {
   #reviews-container {
     grid-column: 1 / 2;
     grid-row: 2;
+  }
+
+  #review-form {
+    grid-column: 1 / 2;
+    grid-row: 3;
   }
 
   .inside #footer {
@@ -386,7 +391,8 @@ nav h1 a {
   text-transform: uppercase;
 }
 #restaurant-container,
-#reviews-container {
+#reviews-container,
+#review-form {
   border-bottom: 1px solid #d9d9d9;
   border-top: 1px solid #fff;
   padding: 1em;
@@ -433,4 +439,59 @@ nav h1 a {
 }
 #restaurant-hours td {
   color: #666;
+}
+
+#review-form {
+  padding: 1em;
+}
+#review-form form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+#review-form div:nth-child(1) {
+  width: calc(70% - 0.5em);
+}
+#review-form div:nth-child(2) {
+  width: calc(30% - 0.5em);
+}
+#review-form div:nth-last-of-type(1) {
+  width: 100%;
+}
+#review-form h2 {
+  color: #dc3a00;
+  font-family: Arial, sans-serif;
+  font-size: 14pt;
+  font-weight: 200;
+  margin: 0.5em 0 1em;
+  line-height: 1.1;
+}
+.form-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+}
+.form-item label {
+  font-weight: bold;
+  line-height: 1.8;
+}
+#review-form textarea {
+  resize: vertical;
+}
+#review-form input,
+#review-form textarea {
+  border: 1px solid #ccc;
+  padding: 0.75em;
+}
+#review-form button {
+  background-color: #dc3a00;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  font-size: 10pt;
+  padding: 1.1em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  width: 100%;
 }
