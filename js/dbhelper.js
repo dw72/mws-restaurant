@@ -1,6 +1,9 @@
 /**
  * Common database helper functions.
  */
+
+let db;
+
 class DBHelper {
   /**
    * Database URL.
@@ -16,7 +19,10 @@ class DBHelper {
       return Promise.resolve();
     }
 
-    return idb
+    if (!db) {
+    }
+
+    db = idb
       .open("mws-restaurants", 1, upgradeDb => {
         switch (upgradeDb.oldVersion) {
           case 0:
@@ -27,6 +33,8 @@ class DBHelper {
       .catch(err => {
         console.error("Local database open failed: ", err.stack);
       });
+
+    return db;
   }
 
   /**
