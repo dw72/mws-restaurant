@@ -1,4 +1,4 @@
-import { storage } from './storage';
+import { storage } from "./storage";
 
 class DBHelper {
   /**
@@ -13,11 +13,11 @@ class DBHelper {
   /**
    * Check if response is ok and return json data
    */
-  static async jsonFromResponse(response) {
+  static jsonFromResponse(response) {
     if (response.ok) {
       return response.json();
     }
-    throw new Error('The network response was not ok');
+    throw new Error("The network response was not ok");
   }
 
   /**
@@ -66,7 +66,7 @@ class DBHelper {
   /**
    * Fetch restaurants by a cuisine and a neighborhood with proper error handling.
    */
-  static fetchRestaurantByCuisineAndNeighborhood(cuisine = 'all', neighborhood = 'all') {
+  static fetchRestaurantByCuisineAndNeighborhood(cuisine = "all", neighborhood = "all") {
     // Fetch all restaurants
     return DBHelper.fetchRestaurants().then(restaurants => {
       if (!restaurants) {
@@ -74,11 +74,11 @@ class DBHelper {
       }
 
       let results = restaurants;
-      if (cuisine != 'all') {
+      if (cuisine != "all") {
         // filter by cuisine
         results = results.filter(r => r.cuisine_type == cuisine);
       }
-      if (neighborhood != 'all') {
+      if (neighborhood != "all") {
         // filter by neighborhood
         results = results.filter(r => r.neighborhood == neighborhood);
       }
@@ -147,9 +147,9 @@ class DBHelper {
    * Register service worker
    */
   static registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       navigator.serviceWorker
-        .register('/sw.js', { scope: '/' })
+        .register("/sw.js", { scope: "/" })
         .then(reg => {
           console.debug(`Service worker registered with scope ${reg.scope}`);
         })
@@ -157,6 +157,23 @@ class DBHelper {
           console.error(`Registration of service worker failed with: ${error}`);
         });
     }
+  }
+
+  static registerSync(type) {
+    return navigator.serviceWorker.ready.then(reg => {
+      if (reg.sync) {
+        return reg.sync
+          .register(type)
+          .then(event => {
+            console.log("Sync registered", event);
+          })
+          .catch(error => {
+            console.log("Sync registration failed", error);
+          });
+      } else {
+        console.log("Sync not supported");
+      }
+    });
   }
 }
 

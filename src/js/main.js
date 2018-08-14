@@ -1,7 +1,7 @@
-import 'lazysizes';
-import GoogleMapsLoader from './gmaps';
-import DBHelper from './dbhelper';
-import { storage } from './storage';
+import "lazysizes";
+import GoogleMapsLoader from "./gmaps";
+import DBHelper from "./dbhelper";
+import { storage } from "./storage";
 
 const state = {
   restaurants: [],
@@ -14,7 +14,7 @@ let map;
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   DBHelper.registerServiceWorker();
 
   fetchNeighborhoods();
@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
       lat: 40.722216,
       lng: -73.987501
     };
-    map = new google.maps.Map(document.getElementById('map'), {
-      title: 'Restaurants Map',
+    map = new google.maps.Map(document.getElementById("map"), {
+      title: "Restaurants Map",
       zoom: 12,
       center: loc,
       scrollwheel: false
@@ -35,10 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-document.querySelector('#neighborhoods-select').addEventListener('change', () => {
+document.querySelector("#neighborhoods-select").addEventListener("change", () => {
   updateRestaurants();
 });
-document.querySelector('#cuisines-select').addEventListener('change', () => {
+document.querySelector("#cuisines-select").addEventListener("change", () => {
   updateRestaurants();
 });
 
@@ -62,9 +62,9 @@ const fetchNeighborhoods = () => {
  * Set neighborhoods HTML.
  */
 const fillNeighborhoodsHTML = (neighborhoods = state.neighborhoods) => {
-  const select = document.getElementById('neighborhoods-select');
+  const select = document.getElementById("neighborhoods-select");
   neighborhoods.forEach(neighborhood => {
-    const option = document.createElement('option');
+    const option = document.createElement("option");
     option.innerHTML = neighborhood;
     option.value = neighborhood;
     select.append(option);
@@ -91,10 +91,10 @@ const fetchCuisines = () => {
  * Set cuisines HTML.
  */
 const fillCuisinesHTML = (cuisines = state.cuisines) => {
-  const select = document.getElementById('cuisines-select');
+  const select = document.getElementById("cuisines-select");
 
   cuisines.forEach(cuisine => {
-    const option = document.createElement('option');
+    const option = document.createElement("option");
     option.innerHTML = cuisine;
     option.value = cuisine;
     select.append(option);
@@ -105,8 +105,8 @@ const fillCuisinesHTML = (cuisines = state.cuisines) => {
  * Update page and map for current restaurants.
  */
 const updateRestaurants = () => {
-  const cSelect = document.getElementById('cuisines-select');
-  const nSelect = document.getElementById('neighborhoods-select');
+  const cSelect = document.getElementById("cuisines-select");
+  const nSelect = document.getElementById("neighborhoods-select");
 
   const cIndex = cSelect.selectedIndex;
   const nIndex = nSelect.selectedIndex;
@@ -132,8 +132,8 @@ const updateRestaurants = () => {
 const resetRestaurants = restaurants => {
   // Remove all restaurants
   state.restaurants = [];
-  const ul = document.getElementById('restaurants-list');
-  ul.innerHTML = '';
+  const ul = document.getElementById("restaurants-list");
+  ul.innerHTML = "";
 
   // Remove all map markers
   if (state.markers) {
@@ -147,7 +147,7 @@ const resetRestaurants = restaurants => {
  * Create all restaurants HTML and add them to the webpage.
  */
 const fillRestaurantsHTML = (restaurants = state.restaurants) => {
-  const ul = document.getElementById('restaurants-list');
+  const ul = document.getElementById("restaurants-list");
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
@@ -158,32 +158,52 @@ const fillRestaurantsHTML = (restaurants = state.restaurants) => {
  * Create restaurant HTML.
  */
 const createRestaurantHTML = restaurant => {
-  const li = document.createElement('li');
+  const li = document.createElement("li");
 
-  const image = document.createElement('img');
-  image.className = 'restaurant-img lazyload';
+  const image = document.createElement("img");
+  image.className = "restaurant-img lazyload";
   const imageFile = require(`../img/${restaurant.id}.jpg`);
-  image.setAttribute('data-src', imageFile.src);
-  image.setAttribute('data-srcset', imageFile.srcSet);
-  image.setAttribute('data-sizes', 'auto');
-  image.alt = '';
+  image.setAttribute("data-src", imageFile.src);
+  image.setAttribute("data-srcset", imageFile.srcSet);
+  image.setAttribute("data-sizes", "auto");
+  image.alt = "";
   li.append(image);
 
-  const name = document.createElement('h3');
-  name.innerHTML = restaurant.name;
-  li.append(name);
+  const div = document.createElement("div");
+  div.className = "restaurant-headline";
+  li.append(div);
 
-  const neighborhood = document.createElement('p');
+  const name = document.createElement("h3");
+  name.innerHTML = restaurant.name;
+  div.append(name);
+
+  const favId = `favbox-${restaurant.id}`;
+  const favInput = document.createElement("input");
+  favInput.type = "checkbox";
+  favInput.checked = restaurant.is_favorite === "true";
+  favInput.id = favId;
+  favInput.setAttribute("aria-label", `"${restaurant.name}" is your favorite`);
+  favInput.setAttribute("data-id", restaurant.id);
+  favInput.addEventListener("change", toggleFavorite);
+  div.append(favInput);
+
+  const favLabel = document.createElement("label");
+  favLabel.htmlFor = favId;
+  favLabel.innerHTML =
+    '<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" /></svg>';
+  div.append(favLabel);
+
+  const neighborhood = document.createElement("p");
   neighborhood.innerHTML = restaurant.neighborhood;
   li.append(neighborhood);
 
-  const address = document.createElement('p');
+  const address = document.createElement("p");
   address.innerHTML = restaurant.address;
   li.append(address);
 
-  const more = document.createElement('a');
-  more.innerHTML = 'View Details';
-  more.setAttribute('aria-label', `View details of ${restaurant.name}`);
+  const more = document.createElement("a");
+  more.innerHTML = "View Details";
+  more.setAttribute("aria-label", `View details of ${restaurant.name}`);
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more);
 
@@ -197,7 +217,7 @@ const addMarkersToMap = (restaurants = state.restaurants) => {
   restaurants.forEach(restaurant => {
     // Add marker to the map
     const marker = DBHelper.mapMarkerForRestaurant(restaurant, map);
-    google.maps.event.addListener(marker, 'click', () => {
+    google.maps.event.addListener(marker, "click", () => {
       window.location.href = marker.url;
     });
     state.markers.push(marker);
@@ -208,14 +228,13 @@ const addMarkersToMap = (restaurants = state.restaurants) => {
  * Favorite restaurant button clicked
  */
 
-const toggleFavorite = restaurant => {
-  console.log('begin toggle', restaurant);
-  const state = stringToBoolean(restaurant.is_favorite);
-  fetch(`http://localhost:1337/restaurants/${restaurant.id}?is_favorite=${!state}`, { method: 'PUT' })
-    .then(res => res.json())
-    .then(restaurant => {
-      const button = document.querySelector(`button[data-restaurant="${restaurant.id}"]`);
-      button.innerHTML = stringToBoolean(restaurant.is_favorite) ? icons.star : icons.starOutline;
-      console.log('end toggle', restaurant);
-    });
+const toggleFavorite = async event => {
+  const restaurant = await storage.getRestaurant(event.target.dataset.id);
+  restaurant.is_favorite = event.target.checked ? "true" : "false";
+  restaurant.sync = { ...restaurant.sync, favorite: true };
+  await storage.putRestaurant(restaurant);
+  // Sync database changes with api
+  navigator.serviceWorker.ready.then(sw => {
+    return sw.sync.register("sync-favorites");
+  });
 };
