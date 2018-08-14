@@ -278,6 +278,30 @@ nav h1 a {
   margin: 1.25em 0 0.75em;
   text-transform: uppercase;
 }
+#restaurants-list .restaurant-headline {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+#restaurants-list li label {
+  border: 0;
+  background-color: inherit;
+  color: transparent;
+  margin-top: 0.75em;
+  padding: 0;
+}
+svg {
+  fill: currentColor;
+  stroke: orange;
+  stroke-linejoin: round;
+  stroke-width: 2px;
+}
+#restaurants-list input {
+  display: none;
+}
+#restaurants-list input:checked + label {
+  color: orange;
+}
 #restaurants-list p {
   margin: 0;
   font-size: 11pt;

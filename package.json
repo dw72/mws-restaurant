@@ -1,10 +1,11 @@
 {
-  "name": "mws-restaurant-stage-1",
+  "name": "mws-restaurant",
   "version": "1.0.0",
   "description": "--- #### _Three Stage Course Material Project - Restaurant Reviews_",
   "scripts": {
-    "build": "gulp",
-    "start": "node_modules/http-server/bin/http-server -p 5500"
+    "build": "webpack --config webpack.prod.js",
+    "dev": "webpack-dev-server --open --config webpack.dev.js",
+    "start": "node node_modules/local-web-server/bin/cli.js -z -p 5500 -d dist"
   },
   "repository": {
     "type": "git",
@@ -13,15 +14,33 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-imagemin": "^4.1.0",
-    "gulp-load-plugins": "^1.5.0",
-    "gulp-responsive": "^2.9.0",
-    "http-server": "^0.11.1"
+    "babel-loader": "^7.1.5",
+    "clean-webpack-plugin": "^0.1.19",
+    "copy-webpack-plugin": "^4.5.2",
+    "css-loader": "^0.28.11",
+    "eslint": "^5.3.0",
+    "html-critical-webpack-plugin": "^2.1.0",
+    "html-webpack-exclude-assets-plugin": "0.0.7",
+    "html-webpack-plugin": "^3.2.0",
+    "jimp": "^0.2.28",
+    "local-web-server": "^2.6.0",
+    "mini-css-extract-plugin": "^0.4.1",
+    "purify-css": "^1.2.5",
+    "purifycss-webpack": "^0.7.0",
+    "responsive-loader": "^1.1.0",
+    "style-loader": "^0.21.0",
+    "uglifyjs-webpack-plugin": "^1.2.7",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.16.5",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5",
+    "webpack-merge": "^4.1.4",
+    "webpack-pwa-manifest": "^3.7.1",
+    "workbox-webpack-plugin": "^3.4.1"
   },
   "dependencies": {
+    "google-maps": "^3.3.0",
     "idb": "^2.1.1",
-    "lazysizes": "^4.0.2"
+    "lazysizes": "^4.1.0"
   }
 }
