@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
       lng: -73.987501
     };
     map = new google.maps.Map(document.getElementById("map"), {
+      // @ts-ignore
       title: "Restaurants Map",
       zoom: 12,
       center: loc,
@@ -67,7 +68,7 @@ const fillNeighborhoodsHTML = (neighborhoods = state.neighborhoods) => {
     const option = document.createElement("option");
     option.innerHTML = neighborhood;
     option.value = neighborhood;
-    select.append(option);
+    select.appendChild(option);
   });
 };
 
@@ -97,7 +98,7 @@ const fillCuisinesHTML = (cuisines = state.cuisines) => {
     const option = document.createElement("option");
     option.innerHTML = cuisine;
     option.value = cuisine;
-    select.append(option);
+    select.appendChild(option);
   });
 };
 
@@ -108,7 +109,9 @@ const updateRestaurants = () => {
   const cSelect = document.getElementById("cuisines-select");
   const nSelect = document.getElementById("neighborhoods-select");
 
+  // @ts-ignore
   const cIndex = cSelect.selectedIndex;
+  // @ts-ignore
   const nIndex = nSelect.selectedIndex;
 
   const cuisine = cSelect[cIndex].value;
@@ -149,7 +152,7 @@ const resetRestaurants = restaurants => {
 const fillRestaurantsHTML = (restaurants = state.restaurants) => {
   const ul = document.getElementById("restaurants-list");
   restaurants.forEach(restaurant => {
-    ul.append(createRestaurantHTML(restaurant));
+    ul.appendChild(createRestaurantHTML(restaurant));
   });
   addMarkersToMap();
 };
@@ -167,15 +170,15 @@ const createRestaurantHTML = restaurant => {
   image.setAttribute("data-srcset", imageFile.srcSet);
   image.setAttribute("data-sizes", "auto");
   image.alt = "";
-  li.append(image);
+  li.appendChild(image);
 
   const div = document.createElement("div");
   div.className = "restaurant-headline";
-  li.append(div);
+  li.appendChild(div);
 
   const name = document.createElement("h3");
   name.innerHTML = restaurant.name;
-  div.append(name);
+  div.appendChild(name);
 
   const favId = `favbox-${restaurant.id}`;
   const favInput = document.createElement("input");
@@ -185,27 +188,27 @@ const createRestaurantHTML = restaurant => {
   favInput.setAttribute("aria-label", `"${restaurant.name}" is your favorite`);
   favInput.setAttribute("data-id", restaurant.id);
   favInput.addEventListener("change", toggleFavorite);
-  div.append(favInput);
+  div.appendChild(favInput);
 
   const favLabel = document.createElement("label");
   favLabel.htmlFor = favId;
   favLabel.innerHTML =
     '<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" /></svg>';
-  div.append(favLabel);
+  div.appendChild(favLabel);
 
   const neighborhood = document.createElement("p");
   neighborhood.innerHTML = restaurant.neighborhood;
-  li.append(neighborhood);
+  li.appendChild(neighborhood);
 
   const address = document.createElement("p");
   address.innerHTML = restaurant.address;
-  li.append(address);
+  li.appendChild(address);
 
   const more = document.createElement("a");
   more.innerHTML = "View Details";
   more.setAttribute("aria-label", `View details of ${restaurant.name}`);
   more.href = DBHelper.urlForRestaurant(restaurant);
-  li.append(more);
+  li.appendChild(more);
 
   return li;
 };

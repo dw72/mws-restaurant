@@ -8,6 +8,7 @@ var map;
 document.addEventListener('DOMContentLoaded', () => {
   DBHelper.registerServiceWorker();
 
+  // Initialize Google map
   GoogleMapsLoader.load(() => {
     // Get id from URL
     const id = getParameterByName('id');
@@ -37,38 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
-/**
- * Initialize Google map, called from HTML.
- */
-window.initMap = () => {
-  // Get id from URL
-  const id = getParameterByName('id');
-  if (!id) {
-    console.error('Error: No restaurant id in URL');
-  } else {
-    // Fetch restaurant by id
-    DBHelper.fetchRestaurantById(id)
-      .then(restaurant => {
-        if (restaurant) {
-          self.restaurant = restaurant;
-          fillRestaurantHTML();
-
-          self.map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 16,
-            center: restaurant.latlng,
-            scrollwheel: false
-          });
-
-          fillBreadcrumb();
-          DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
-  }
-};
 
 /**
  * Create restaurant HTML and add it to the webpage

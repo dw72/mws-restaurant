@@ -1,5 +1,5 @@
-import idb from "idb";
-import DBHelper from "./dbhelper";
+import idb from 'idb';
+import DBHelper from './dbhelper';
 
 export let storage = (() => {
   let db;
@@ -7,15 +7,15 @@ export let storage = (() => {
   function getDB() {
     if (!db) {
       db = idb
-        .open("mws-restaurants", 1, upgradeDb => {
+        .open('mws-restaurants', 1, upgradeDb => {
           switch (upgradeDb.oldVersion) {
-            case 0:
-              upgradeDb.createObjectStore("restaurants", { keyPath: "id" });
-              break;
+          case 0:
+            upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
+            break;
           }
         })
         .catch(err => {
-          console.error("Local database open failed: ", err.stack);
+          console.error('Local database open failed: ', err.stack);
         });
     }
     return db;
@@ -25,23 +25,23 @@ export let storage = (() => {
     async getAllRestaurants() {
       const db = await getDB();
       const restaurants = db
-        .transaction("restaurants")
-        .objectStore("restaurants")
+        .transaction('restaurants')
+        .objectStore('restaurants')
         .getAll();
       return restaurants;
     },
     async getRestaurant(id) {
       const db = await getDB();
       const restaurant = db
-        .transaction("restaurants")
-        .objectStore("restaurants")
+        .transaction('restaurants')
+        .objectStore('restaurants')
         .get(+id);
       return restaurant;
     },
     async putAllRestaurants(restaurants) {
       const db = await getDB();
-      const tx = db.transaction("restaurants", "readwrite");
-      const store = tx.objectStore("restaurants");
+      const tx = db.transaction('restaurants', 'readwrite');
+      const store = tx.objectStore('restaurants');
       for (let restaurant of restaurants) {
         store.put(restaurant);
       }
@@ -49,8 +49,8 @@ export let storage = (() => {
     },
     async putRestaurant(restaurant) {
       const db = await getDB();
-      const tx = db.transaction("restaurants", "readwrite");
-      tx.objectStore("restaurants").put(restaurant);
+      const tx = db.transaction('restaurants', 'readwrite');
+      tx.objectStore('restaurants').put(restaurant);
       return tx.complete;
     },
     //  No async/await because event.waitUntil need Promise not function
@@ -59,7 +59,7 @@ export let storage = (() => {
         this.getAllRestaurants().then(restaurants => {
           restaurants.filter(restaurant => restaurant.sync && restaurant.sync.favorite).forEach(restaurant => {
             fetch(`${DBHelper.API_URL}/restaurants/${restaurant.id}/?is_favorite=${restaurant.is_favorite}`, {
-              method: "PUT"
+              method: 'PUT'
             }).then(res => {
               if (res.ok) {
                 restaurant.sync.favorite = false;
