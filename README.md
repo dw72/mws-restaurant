@@ -6,7 +6,7 @@
 
 ## Prequisites
 
-Before running this project You need to install and run [Local Development API Server](https://github.com/udacity/mws-restaurant-stage-2)
+Before running this project You need to install and run [Local Development API Server](https://github.com/udacity/mws-restaurant-stage-3)
 
 ## Steps to run the project
 
