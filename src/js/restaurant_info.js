@@ -2,6 +2,7 @@ import 'lazysizes';
 import { storage } from './storage';
 import GoogleMapsLoader from './gmaps';
 import DBHelper from './dbhelper';
+import './notify';
 
 let restaurant;
 var map;

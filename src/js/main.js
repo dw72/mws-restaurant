@@ -2,6 +2,7 @@ import 'lazysizes';
 import GoogleMapsLoader from './gmaps';
 import DBHelper from './dbhelper';
 import { storage } from './storage';
+import './notify';
 
 const state = {
   restaurants: [],
