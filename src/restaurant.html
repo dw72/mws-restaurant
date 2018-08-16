@@ -60,6 +60,26 @@
       <ul id="reviews-list"></ul>
     </section>
     <!-- End reviews -->
+    <!-- Beginning review form -->
+    <section id="review-form">
+      <h2>Add your review</h2>
+      <form id="review">
+        <div class="form-item">
+          <label for="username">Name</label>
+          <input type="text" name="username" id="username">
+        </div>
+        <div class="form-item">
+          <label for="rating">Rating</label>
+          <input type="number" name="rating" id="rating" min="1" max="5" value="5">
+        </div>
+        <div class="form-item">
+          <label for="comments">Review</label>
+          <textarea name="comments" id="comments" cols="30" rows="10"></textarea>
+        </div>
+        <button type="submit" id="submit-review">Post review</button>
+      </form>
+    </section>
+    <!-- End review form -->
   </main>
   <!-- End main -->
 

@@ -1,7 +1,7 @@
-import "lazysizes";
-import GoogleMapsLoader from "./gmaps";
-import DBHelper from "./dbhelper";
-import { storage } from "./storage";
+import 'lazysizes';
+import GoogleMapsLoader from './gmaps';
+import DBHelper from './dbhelper';
+import { storage } from './storage';
 
 const state = {
   restaurants: [],
@@ -14,7 +14,7 @@ let map;
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   DBHelper.registerServiceWorker();
 
   fetchNeighborhoods();
@@ -25,9 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
       lat: 40.722216,
       lng: -73.987501
     };
-    map = new google.maps.Map(document.getElementById("map"), {
+    map = new google.maps.Map(document.getElementById('map'), {
       // @ts-ignore
-      title: "Restaurants Map",
+      title: 'Restaurants Map',
       zoom: 12,
       center: loc,
       scrollwheel: false
@@ -36,10 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-document.querySelector("#neighborhoods-select").addEventListener("change", () => {
+document.querySelector('#neighborhoods-select').addEventListener('change', () => {
   updateRestaurants();
 });
-document.querySelector("#cuisines-select").addEventListener("change", () => {
+document.querySelector('#cuisines-select').addEventListener('change', () => {
   updateRestaurants();
 });
 
@@ -63,9 +63,9 @@ const fetchNeighborhoods = () => {
  * Set neighborhoods HTML.
  */
 const fillNeighborhoodsHTML = (neighborhoods = state.neighborhoods) => {
-  const select = document.getElementById("neighborhoods-select");
+  const select = document.getElementById('neighborhoods-select');
   neighborhoods.forEach(neighborhood => {
-    const option = document.createElement("option");
+    const option = document.createElement('option');
     option.innerHTML = neighborhood;
     option.value = neighborhood;
     select.appendChild(option);
@@ -92,10 +92,10 @@ const fetchCuisines = () => {
  * Set cuisines HTML.
  */
 const fillCuisinesHTML = (cuisines = state.cuisines) => {
-  const select = document.getElementById("cuisines-select");
+  const select = document.getElementById('cuisines-select');
 
   cuisines.forEach(cuisine => {
-    const option = document.createElement("option");
+    const option = document.createElement('option');
     option.innerHTML = cuisine;
     option.value = cuisine;
     select.appendChild(option);
@@ -106,8 +106,8 @@ const fillCuisinesHTML = (cuisines = state.cuisines) => {
  * Update page and map for current restaurants.
  */
 const updateRestaurants = () => {
-  const cSelect = document.getElementById("cuisines-select");
-  const nSelect = document.getElementById("neighborhoods-select");
+  const cSelect = document.getElementById('cuisines-select');
+  const nSelect = document.getElementById('neighborhoods-select');
 
   // @ts-ignore
   const cIndex = cSelect.selectedIndex;
@@ -135,8 +135,8 @@ const updateRestaurants = () => {
 const resetRestaurants = restaurants => {
   // Remove all restaurants
   state.restaurants = [];
-  const ul = document.getElementById("restaurants-list");
-  ul.innerHTML = "";
+  const ul = document.getElementById('restaurants-list');
+  ul.innerHTML = '';
 
   // Remove all map markers
   if (state.markers) {
@@ -150,7 +150,7 @@ const resetRestaurants = restaurants => {
  * Create all restaurants HTML and add them to the webpage.
  */
 const fillRestaurantsHTML = (restaurants = state.restaurants) => {
-  const ul = document.getElementById("restaurants-list");
+  const ul = document.getElementById('restaurants-list');
   restaurants.forEach(restaurant => {
     ul.appendChild(createRestaurantHTML(restaurant));
   });
@@ -161,56 +161,79 @@ const fillRestaurantsHTML = (restaurants = state.restaurants) => {
  * Create restaurant HTML.
  */
 const createRestaurantHTML = restaurant => {
-  const li = document.createElement("li");
+  const isTrue = value => {
+    if (value === true || value === 'true') return true;
+    return false;
+  };
 
-  const image = document.createElement("img");
-  image.className = "restaurant-img lazyload";
+  const li = document.createElement('li');
+
+  const image = document.createElement('img');
+  image.className = 'restaurant-img lazyload';
   const imageFile = require(`../img/${restaurant.id}.jpg`);
-  image.setAttribute("data-src", imageFile.src);
-  image.setAttribute("data-srcset", imageFile.srcSet);
-  image.setAttribute("data-sizes", "auto");
-  image.alt = "";
+  image.setAttribute('data-src', imageFile.src);
+  image.setAttribute('data-srcset', imageFile.srcSet);
+  image.setAttribute('data-sizes', 'auto');
+  image.alt = '';
   li.appendChild(image);
 
-  const div = document.createElement("div");
-  div.className = "restaurant-headline";
+  const div = document.createElement('div');
+  div.className = 'restaurant-headline';
   li.appendChild(div);
 
-  const name = document.createElement("h3");
+  const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
   div.appendChild(name);
 
   const favId = `favbox-${restaurant.id}`;
-  const favInput = document.createElement("input");
-  favInput.type = "checkbox";
-  favInput.checked = restaurant.is_favorite === "true";
+  const favInput = document.createElement('input');
+  favInput.type = 'checkbox';
+  favInput.checked = isTrue(restaurant.is_favorite);
   favInput.id = favId;
-  favInput.setAttribute("aria-label", `"${restaurant.name}" is your favorite`);
-  favInput.setAttribute("data-id", restaurant.id);
-  favInput.addEventListener("change", toggleFavorite);
+  favInput.setAttribute('aria-label', `"${restaurant.name}" is your favorite`);
+  favInput.setAttribute('data-id', restaurant.id);
+  favInput.addEventListener('change', toggleFavorite);
   div.appendChild(favInput);
 
-  const favLabel = document.createElement("label");
+  const favLabel = document.createElement('label');
   favLabel.htmlFor = favId;
   favLabel.innerHTML =
-    '<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" /></svg>';
+    '<svg viewBox="0 0 24 24"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" /></svg >';
   div.appendChild(favLabel);
 
-  const neighborhood = document.createElement("p");
+  const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
   li.appendChild(neighborhood);
 
-  const address = document.createElement("p");
+  const address = document.createElement('p');
   address.innerHTML = restaurant.address;
   li.appendChild(address);
 
-  const more = document.createElement("a");
-  more.innerHTML = "View Details";
-  more.setAttribute("aria-label", `View details of ${restaurant.name}`);
+  const more = document.createElement('a');
+  more.innerHTML = 'View Details';
+  more.setAttribute('aria-label', `View details of ${restaurant.name}`);
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.appendChild(more);
 
   return li;
+};
+
+/**
+ * Favorite restaurant button clicked
+ */
+
+const toggleFavorite = async event => {
+  const id = +event.target.dataset.id;
+  const isFavorite = event.target.checked;
+  // let changes = await storage.getOutboxData(id);
+  // changes = { id, ...changes, is_favorite: isFavorite };
+  // await storage.putOutboxData(changes);
+  const change = { id, is_favorite: isFavorite };
+  await storage.putOutboxData(change);
+  // Sync outbox with api
+  DBHelper.registerSync('sync-restaurants').catch(() => {
+    DBHelper.toggleFavoriteForRestaurant(id, isFavorite);
+  });
 };
 
 /**
@@ -220,24 +243,9 @@ const addMarkersToMap = (restaurants = state.restaurants) => {
   restaurants.forEach(restaurant => {
     // Add marker to the map
     const marker = DBHelper.mapMarkerForRestaurant(restaurant, map);
-    google.maps.event.addListener(marker, "click", () => {
+    google.maps.event.addListener(marker, 'click', () => {
       window.location.href = marker.url;
     });
     state.markers.push(marker);
-  });
-};
-
-/**
- * Favorite restaurant button clicked
- */
-
-const toggleFavorite = async event => {
-  const restaurant = await storage.getRestaurant(event.target.dataset.id);
-  restaurant.is_favorite = event.target.checked ? "true" : "false";
-  restaurant.sync = { ...restaurant.sync, favorite: true };
-  await storage.putRestaurant(restaurant);
-  // Sync database changes with api
-  navigator.serviceWorker.ready.then(sw => {
-    return sw.sync.register("sync-favorites");
   });
 };

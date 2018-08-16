@@ -7,11 +7,12 @@ export let storage = (() => {
   function getDB() {
     if (!db) {
       db = idb
-        .open('mws-restaurants', 1, upgradeDb => {
+        .open('mws-restaurants', 2, upgradeDb => {
           switch (upgradeDb.oldVersion) {
-          case 0:
-            upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
-            break;
+            case 0:
+              upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
+            case 1:
+              upgradeDb.createObjectStore('outbox', { keyPath: 'id' });
           }
         })
         .catch(err => {
@@ -21,54 +22,70 @@ export let storage = (() => {
     return db;
   }
 
+  async function getStore(name, mode = 'readonly') {
+    const db = await getDB();
+    return db.transaction(name, mode).objectStore(name);
+  }
+
   return {
     async getAllRestaurants() {
-      const db = await getDB();
-      const restaurants = db
-        .transaction('restaurants')
-        .objectStore('restaurants')
-        .getAll();
-      return restaurants;
+      const store = await getStore('restaurants');
+      return store.getAll();
     },
     async getRestaurant(id) {
-      const db = await getDB();
-      const restaurant = db
-        .transaction('restaurants')
-        .objectStore('restaurants')
-        .get(+id);
-      return restaurant;
+      const store = await getStore('restaurants');
+      return store.get(+id);
     },
     async putAllRestaurants(restaurants) {
-      const db = await getDB();
-      const tx = db.transaction('restaurants', 'readwrite');
-      const store = tx.objectStore('restaurants');
+      const store = await getStore('restaurants', 'readwrite');
       for (let restaurant of restaurants) {
-        store.put(restaurant);
+        await store.put(restaurant);
       }
-      return tx.complete;
     },
     async putRestaurant(restaurant) {
-      const db = await getDB();
-      const tx = db.transaction('restaurants', 'readwrite');
-      tx.objectStore('restaurants').put(restaurant);
-      return tx.complete;
+      const store = await getStore('restaurants', 'readwrite');
+      return store.put(restaurant);
     },
-    //  No async/await because event.waitUntil need Promise not function
-    syncFavorites() {
-      return Promise.resolve(
-        this.getAllRestaurants().then(restaurants => {
-          restaurants.filter(restaurant => restaurant.sync && restaurant.sync.favorite).forEach(restaurant => {
-            fetch(`${DBHelper.API_URL}/restaurants/${restaurant.id}/?is_favorite=${restaurant.is_favorite}`, {
-              method: 'PUT'
-            }).then(res => {
-              if (res.ok) {
-                restaurant.sync.favorite = false;
-                storage.putRestaurant(restaurant);
-              }
-            });
-          });
-        })
-      );
+    async getAllOutboxData() {
+      const store = await getStore('outbox');
+      return store.getAll();
+    },
+    async getOutboxData(id) {
+      const store = await getStore('outbox');
+      return store.get(+id);
+    },
+    async putOutboxData(data) {
+      const store = await getStore('outbox', 'readwrite');
+      return store.put(data);
+    },
+    async deleteOutboxData(id) {
+      const store = await getStore('outbox', 'readwrite');
+      return store.delete(+id);
+    },
+    async syncRestaurants() {
+      console.log('Begin background sync of outbox data');
+      try {
+        const changes = await this.getAllOutboxData();
+        for (let change of changes) {
+          const restaurant = await this.getRestaurant(change.id);
+          if (change.hasOwnProperty('reviews')) {
+            for (let review of change.reviews) {
+              const res = await DBHelper.postReview(review);
+              restaurant.reviews = restaurant.reviews || [];
+              restaurant.reviews.push(res);
+            }
+          }
+          if (change.hasOwnProperty('is_favorite')) {
+            const res = await DBHelper.toggleFavoriteForRestaurant(change.id, change.is_favorite);
+            restaurant.is_favorite = res.is_favorite;
+          }
+          await storage.deleteOutboxData(change.id);
+          await storage.putRestaurant(restaurant);
+        }
+        return Promise.resolve();
+      } catch {
+        return Promise.reject();
+      }
     }
   };
 })();

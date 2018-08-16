@@ -5,12 +5,12 @@ const CACHE_VERSION = 1;
 const CACHE_NAME = `${APP_NAME}-v${CACHE_VERSION}`;
 const CACHE_URLS = [
   '/',
-  'index.html',
-  'restaurant.html',
-  'offline.html',
-  'css/styles.css',
-  'js/main.js',
-  'js/restaurant.js'
+  '/index.html',
+  '/restaurant.html',
+  '/offline.html',
+  '/css/styles.css',
+  '/js/main.js',
+  '/js/restaurant.js'
 ];
 
 self.addEventListener('install', event => {
@@ -34,8 +34,19 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('sync', event => {
-  if (event.tag === 'sync-favorites') {
-    event.waitUntil(storage.syncFavorites());
+  if (event.tag == 'sync-restaurants') {
+    event.waitUntil(
+      Promise.resolve(
+        storage
+          .syncRestaurants()
+          .then(() => {
+            console.log('Outbox data sync succesfull');
+          })
+          .catch(err => {
+            console.log('Error syncing outbox data', err);
+          })
+      )
+    );
   }
 });
 
@@ -47,7 +58,7 @@ self.addEventListener('message', event => {
 
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
-  if (!url.protocol.startsWith('http') || url.port === '1337') return;
+  if (!url.protocol.startsWith('http') || url.port === '1337' || event.request.method !== 'GET') return;
   event.respondWith(
     caches.open(CACHE_NAME).then(cache => {
       return cache.match(event.request).then(cacheResponse => {

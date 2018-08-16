@@ -1,4 +1,5 @@
 import 'lazysizes';
+import { storage } from './storage';
 import GoogleMapsLoader from './gmaps';
 import DBHelper from './dbhelper';
 
@@ -36,6 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
           console.error(err);
         });
     }
+  });
+
+  const submitReviewButton = document.querySelector('#submit-review');
+  submitReviewButton.addEventListener('click', event => {
+    event.preventDefault();
+    postReview();
   });
 });
 
@@ -137,6 +144,38 @@ const createReviewHTML = review => {
   li.appendChild(comments);
 
   return li;
+};
+
+/**
+ * Post new review for restaurant
+ */
+const postReview = async () => {
+  const id = self.restaurant.id;
+  const timestamp = Date.now();
+  const form = document.querySelector('form');
+  const review = {
+    restaurant_id: id,
+    name: form.username.value,
+    rating: form.rating.value,
+    comments: form.comments.value,
+    createdAt: timestamp,
+    updatedAt: timestamp
+  };
+  let changes = await storage.getOutboxData(id);
+  changes = { id, reviews: [], ...changes };
+  changes.reviews.push(review);
+  await storage.putOutboxData(changes);
+  // Create new review HTML and add it to the webpage
+  const ul = document.getElementById('reviews-list');
+  ul.appendChild(createReviewHTML(review));
+  // Cleanup form
+  form.username.value = '';
+  form.rating.value = 5;
+  form.comments.value = '';
+  // Sync outbox with api
+  DBHelper.registerSync('sync-restaurants').catch(() => {
+    DBHelper.postReview(review);
+  });
 };
 
 /**

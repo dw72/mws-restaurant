@@ -17,15 +17,23 @@ class DBHelper {
     if (response.ok) {
       return response.json();
     }
-    throw new Error('The network response was not ok');
+    throw new Error(`Server responded with status ${response.status}: ${response.statusText}`);
+  }
+
+  static handleFetchError(error) {
+    console.log('Error while sending request to server', error);
   }
 
   /**
    * Fetch restaurants data - first try load from idb, next fetch from api and update idb data.
    */
   static async fetchAllRestaurantsFromApi() {
-    const restaurants = await fetch(`${DBHelper.API_URL}/restaurants`).then(DBHelper.jsonFromResponse);
-    const reviews = await fetch(`${DBHelper.API_URL}/reviews`).then(DBHelper.jsonFromResponse);
+    const restaurants = await fetch(`${DBHelper.API_URL}/restaurants`)
+      .then(DBHelper.jsonFromResponse)
+      .catch(DBHelper.handleFetchError);
+    const reviews = await fetch(`${DBHelper.API_URL}/reviews`)
+      .then(DBHelper.jsonFromResponse)
+      .catch(DBHelper.handleFetchError);
     restaurants.forEach(restaurant => {
       restaurant.reviews = reviews.filter(review => review.restaurant_id === restaurant.id).map(review => review);
     });
@@ -39,7 +47,14 @@ class DBHelper {
       dbData = await storage.getAllRestaurants();
       apiData = await DBHelper.fetchAllRestaurantsFromApi();
     } finally {
-      return dbData && dbData.length ? dbData : apiData;
+      const restaurants = apiData || dbData;
+      for (let restaurant of restaurants) {
+        const changes = await storage.getOutboxData(restaurant.id);
+        if (changes) {
+          restaurant.is_favorite = changes.is_favorite;
+        }
+      }
+      return restaurants;
     }
   }
 
@@ -47,8 +62,12 @@ class DBHelper {
    * Fetch a restaurant by its ID.
    */
   static async fetchRestaurantFromApi(id) {
-    const restaurant = await fetch(`${DBHelper.API_URL}/restaurants/${id}`).then(DBHelper.jsonFromResponse);
-    restaurant.reviews = await fetch(`${DBHelper.API_URL}/reviews?restaurant_id=${id}`).then(DBHelper.jsonFromResponse);
+    const restaurant = await fetch(`${DBHelper.API_URL}/restaurants/${id}`)
+      .then(DBHelper.jsonFromResponse)
+      .catch(DBHelper.handleFetchError);
+    restaurant.reviews = await fetch(`${DBHelper.API_URL}/reviews?restaurant_id=${id}`)
+      .then(DBHelper.jsonFromResponse)
+      .catch(DBHelper.handleFetchError);
     storage.putRestaurant(restaurant);
     return restaurant;
   }
@@ -59,7 +78,16 @@ class DBHelper {
       dbData = await storage.getRestaurant(id);
       apiData = await DBHelper.fetchRestaurantFromApi(id);
     } finally {
-      return dbData || apiData;
+      const restaurant = apiData || dbData;
+      const changes = await storage.getOutboxData(restaurant.id);
+      if (changes && changes.reviews) {
+        if (restaurant.reviews) {
+          restaurant.reviews = restaurant.reviews.concat(changes.reviews);
+        } else {
+          restaurant.reviews = changes.reviews;
+        }
+      }
+      return restaurant;
     }
   }
 
@@ -123,6 +151,24 @@ class DBHelper {
   }
 
   /**
+   * Put favorite status for restaurant specified by id.
+   */
+  static toggleFavoriteForRestaurant(id, favorite) {
+    return fetch(`${DBHelper.API_URL}/restaurants/${id}/?is_favorite=${favorite}`, { method: 'PUT' })
+      .then(DBHelper.jsonFromResponse)
+      .catch(DBHelper.handleFetchError);
+  }
+
+  static postReview(review) {
+    return fetch(`${DBHelper.API_URL}/reviews/`, {
+      method: 'POST',
+      body: JSON.stringify(review)
+    })
+      .then(DBHelper.jsonFromResponse)
+      .catch(DBHelper.handleFetchError);
+  }
+
+  /**
    * Restaurant page URL.
    */
   static urlForRestaurant(restaurant) {
@@ -160,19 +206,32 @@ class DBHelper {
     }
   }
 
-  static registerSync(type) {
-    return navigator.serviceWorker.ready.then(reg => {
-      if (reg.sync) {
-        return reg.sync
-          .register(type)
-          .then(event => {
-            console.log('Sync registered', event);
+  /**
+   * Register service workers sync tag
+   */
+  static registerSync(tag) {
+    return new Promise((resolve, reject) => {
+      if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.ready
+          .then(async reg => {
+            resolve(
+              reg.sync
+                .register(tag)
+                .then(() => {
+                  console.debug(`${tag} registration successfull`);
+                })
+                .catch(err => {
+                  console.error(`${tag} registration failed`, err);
+                })
+            );
           })
-          .catch(error => {
-            console.log('Sync registration failed', error);
+          .catch(err => {
+            console.error('There is a problem with ServiceWorker', err);
+            reject();
           });
       } else {
-        console.log('Sync not supported');
+        console.debug('Background sync not supported');
+        reject();
       }
     });
   }

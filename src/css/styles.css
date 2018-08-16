@@ -292,9 +292,11 @@ nav h1 a {
 }
 svg {
   fill: currentColor;
+  height: 1.8em;
   stroke: orange;
   stroke-linejoin: round;
   stroke-width: 2px;
+  width: 1.8em;
 }
 #restaurants-list input {
   display: none;

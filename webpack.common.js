@@ -23,13 +23,13 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/index.html',
-      excludeAssets: [/styles.*.js/],
+      excludeAssets: [/styles.*\.js/],
       chunks: ['styles', 'js/main']
     }),
     new HtmlWebpackPlugin({
       filename: 'restaurant.html',
       template: 'src/restaurant.html',
-      excludeAssets: [/styles.*.js/],
+      excludeAssets: [/styles.*\.js/],
       chunks: ['styles', 'js/restaurant']
     }),
     new HtmlWebpackExcludeAssetsPlugin(),
