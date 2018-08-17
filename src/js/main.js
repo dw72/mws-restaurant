@@ -226,11 +226,9 @@ const createRestaurantHTML = restaurant => {
 const toggleFavorite = async event => {
   const id = +event.target.dataset.id;
   const isFavorite = event.target.checked;
-  // let changes = await storage.getOutboxData(id);
-  // changes = { id, ...changes, is_favorite: isFavorite };
-  // await storage.putOutboxData(changes);
-  const change = { id, is_favorite: isFavorite };
-  await storage.putOutboxData(change);
+  let changes = await storage.getOutboxData(id);
+  changes = { id, ...changes, is_favorite: isFavorite };
+  await storage.putOutboxData(changes);
   // Sync outbox with api
   DBHelper.registerSync('sync-restaurants').catch(() => {
     DBHelper.toggleFavoriteForRestaurant(id, isFavorite);
