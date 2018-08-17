@@ -179,7 +179,7 @@ const createRestaurantHTML = restaurant => {
   li.appendChild(image);
 
   const div = document.createElement('div');
-  div.className = 'restaurant-headline';
+  div.className = 'restaurant-header';
   li.appendChild(div);
 
   const name = document.createElement('h3');

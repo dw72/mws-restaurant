@@ -3,6 +3,7 @@ const glob = require('glob');
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const PurifyCSSPlugin = require('purifycss-webpack');
 const HtmlCriticalWebpackPlugin = require('html-critical-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
@@ -20,6 +21,17 @@ module.exports = merge(common, {
     ]
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].css',
+      chunkFilename: 'css/[name].css'
+    }),
+    PurifyCSSPlugin({
+      paths: glob.sync(path.join(__dirname, 'src/*.html')),
+      purifyOptions: {
+        whitelist: ['svg']
+      },
+      minimize: true
+    }),
     new HtmlCriticalWebpackPlugin({
       base: path.resolve(__dirname, 'dist/'),
       src: 'index.html',
@@ -32,10 +44,6 @@ module.exports = merge(common, {
       penthouse: {
         blockJSRequests: false
       }
-    }),
-    new PurifyCSSPlugin({
-      paths: glob.sync(path.join(__dirname, 'src/*.html')),
-      minimize: true
     }),
     new WebpackPwaManifest({
       name: 'MWS Restaurants - Stage 3',
