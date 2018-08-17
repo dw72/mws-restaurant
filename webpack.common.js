@@ -18,6 +18,7 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin([{ from: 'src/offline.html', to: 'offline.html' }]),
+    new CopyWebpackPlugin([{ from: 'src/favicon.ico', to: 'favicon.ico' }]),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/index.html',

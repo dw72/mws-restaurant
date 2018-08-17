@@ -49,6 +49,7 @@ module.exports = merge(common, {
       }
     }),
     new WebpackPwaManifest({
+      filename: 'manifest.json',
       name: 'MWS Restaurants - Stage 3',
       short_name: 'MWS Restaurants',
       description: 'Mobile Web Specialist Restaurant Reviews App',
