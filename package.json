@@ -4,7 +4,7 @@
   "description": "--- #### _Three Stage Course Material Project - Restaurant Reviews_",
   "scripts": {
     "clean": "rm -r dist/*",
-    "build": "webpack --config webpack.prod.js",
+    "build": "webpack -p --config webpack.prod.js",
     "dev": "webpack-dev-server --open --config webpack.dev.js",
     "start": "node node_modules/local-web-server/bin/cli.js -z -p 5500 -d dist"
   },
