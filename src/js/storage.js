@@ -9,10 +9,10 @@ export let storage = (() => {
       db = idb
         .open('mws-restaurants', 2, upgradeDb => {
           switch (upgradeDb.oldVersion) {
-            case 0:
-              upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
-            case 1:
-              upgradeDb.createObjectStore('outbox', { keyPath: 'id' });
+          case 0:
+            upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
+          case 1:
+            upgradeDb.createObjectStore('outbox', { keyPath: 'id' });
           }
         })
         .catch(err => {
@@ -83,7 +83,7 @@ export let storage = (() => {
           await storage.putRestaurant(restaurant);
         }
         return Promise.resolve();
-      } catch {
+      } catch (err) {
         return Promise.reject();
       }
     }
