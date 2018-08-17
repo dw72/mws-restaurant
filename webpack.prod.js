@@ -1,10 +1,9 @@
 const path = require('path');
-const glob = require('glob');
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const PurifyCSSPlugin = require('purifycss-webpack');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlCriticalWebpackPlugin = require('html-critical-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 
@@ -17,21 +16,12 @@ module.exports = merge(common, {
         cache: true,
         parallel: true,
         sourceMap: true
-      })
+      }),
+      new OptimizeCSSAssetsPlugin({})
     ]
   },
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: 'css/[name].css',
-      chunkFilename: 'css/[name].css'
-    }),
-    PurifyCSSPlugin({
-      paths: glob.sync(path.join(__dirname, 'src/*.html')),
-      purifyOptions: {
-        whitelist: ['svg']
-      },
-      minimize: true
-    }),
+    new CleanWebpackPlugin('dist', { dry: false }),
     new HtmlCriticalWebpackPlugin({
       base: path.resolve(__dirname, 'dist/'),
       src: 'index.html',
@@ -40,7 +30,20 @@ module.exports = merge(common, {
       minify: true,
       extract: false,
       width: 375,
-      height: 565,
+      height: 667,
+      penthouse: {
+        blockJSRequests: false
+      }
+    }),
+    new HtmlCriticalWebpackPlugin({
+      base: path.resolve(__dirname, 'dist/'),
+      src: 'restaurant.html',
+      dest: 'restaurant.html',
+      inline: true,
+      minify: true,
+      extract: false,
+      width: 375,
+      height: 667,
       penthouse: {
         blockJSRequests: false
       }

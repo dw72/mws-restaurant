@@ -1,9 +1,8 @@
 const path = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: {
@@ -18,7 +17,6 @@ module.exports = {
     filename: '[name].js'
   },
   plugins: [
-    new CleanWebpackPlugin('dist', { dry: false }),
     new CopyWebpackPlugin([{ from: 'src/offline.html', to: 'offline.html' }]),
     new HtmlWebpackPlugin({
       filename: 'index.html',

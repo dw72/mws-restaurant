@@ -537,21 +537,17 @@ svg {
   visibility: hidden;
   z-index: 100;
 }
-
 #snackbar.show {
   visibility: visible;
   animation: fadein 0.5s, fadeout 0.5s 3.5s;
 }
-
 #snackbar p {
   color: white;
   font-size: 1.1em;
 }
-
 #snackbar strong {
   font-size: 1.3em;
 }
-
 @keyframes fadein {
   from {
     bottom: 0;
@@ -562,7 +558,6 @@ svg {
     opacity: 1;
   }
 }
-
 @keyframes fadeout {
   from {
     bottom: 3em;
