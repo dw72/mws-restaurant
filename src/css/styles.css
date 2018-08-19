@@ -166,10 +166,41 @@ nav h1 a {
 #map-container h2 {
   display: none;
 }
+#map-dimmer {
+  bottom: 0;
+  background-color: #252831;
+  left: 0;
+  position: absolute;
+  opacity: 0;
+  right: 0;
+  top: 0;
+  transition: opacity 0.2s ease-in;
+}
+#map-container:hover #map-dimmer.active {
+  opacity: 0.25;
+}
 #map {
-  height: 400px;
-  width: 100%;
+  align-items: center;
   background-color: #ccc;
+  display: flex;
+  height: 400px;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+#map .map-info {
+  background-color: white;
+  box-shadow: 0 0 2px #b1b1b1;
+  cursor: default;
+  font-size: 1.1em;
+  padding: 0.5em 2em;
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+  z-index: 1;
+}
+#map-container:hover .map-info {
+  opacity: 1;
 }
 /* ====================== Restaurant Filtering ====================== */
 .filter-options {
