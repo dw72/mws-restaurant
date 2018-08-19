@@ -169,7 +169,7 @@ const createRestaurantHTML = restaurant => {
   image.setAttribute('data-src', imageFile.src);
   image.setAttribute('data-srcset', imageFile.srcSet);
   image.setAttribute('data-sizes', 'auto');
-  image.alt = '';
+  image.alt = `Photo of ${restaurant.name}`;
   li.appendChild(image);
 
   const div = document.createElement('div');
