@@ -248,7 +248,7 @@ const addMarkersToMap = (restaurants = state.restaurants) => {
  */
 const loadStaticMap = async () => {
   const URL = 'https://maps.googleapis.com/maps/api/staticmap';
-  const KEY = 'AIzaSyCXhuoZlCytSxy3D-9LMn6ZLQPDSY8y2-o';
+  const KEY = 'YOUR_GOOGLE_MAPS_STATIC_API_KEY';
   const map = document.querySelector('#map');
 
   let zoom, scale, size;
